@@ -1,4 +1,6 @@
 import React, { Fragment } from 'react';
+import { map } from 'ramda';
+import initials from 'initials';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
@@ -13,90 +15,75 @@ import Typography from '@material-ui/core/Typography';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import FlagIcon from './FlagIcon';
 
-const datas = [
-  {
-    firstname: 'Thomas',
-    lastname: 'Tridon',
-    country: 'fr',
-    phoneNumber: '06 00 00 00 00',
-    mail: 'thomas.tridon@redpelicans.com',
-    assets: [
-      'UI/UX',
-      'ReactJS',
-      'NodeJS'
-    ],
-    status: 'Pending',
-    rating: 5,
-    reporter: {
-      firstname: 'Eric',
-      lastname: 'Basley'
-    }
-  }
-];
-
-const App = () => {
+const App = ({ classes, datas }) => {
   return (
-    <Grid container>
-      <Card>
-        <CardHeader
-          action={
-            <IconButton>
-              <MoreVertIcon />
-            </IconButton>
-          }
-          avatar={
-            <Avatar>
-              <Typography>TT</Typography>
-            </Avatar>
-          }
-          title={
-            <Fragment>
-              <Typography>Thomas Tridon</Typography>
-              <FlagIcon
-                code='fr'
-              />
-              <Typography>PhoneNumber</Typography>
-              <Link underline='always'>Mail</Link>
-            </Fragment>
-          }
-        />
-        <CardContent spacing={8}>
-          <Grid container spacing={8}>
-            <Grid item>
-              <Chip color='primary' label='UI/UX' variant='outlined' />
-            </Grid>
-            <Grid item>
-              <Chip color='primary' label='ReactJS' variant='outlined' />
-            </Grid>
-            <Grid item>
-              <Chip color='primary' label='NodeJS' variant='outlined' />
-            </Grid>
-          </Grid>
-        </CardContent>
-        <CardContent>
-          <Button
-            fullWidth
-            variant='contained'
-          >
-            <Typography>
-              Pending
-            </Typography>
-          </Button>
-        </CardContent>
-        <CardActions>
-          <Grid container alignItems='center' justify='space-between'>
-            <Grid item>
-              <Typography>Eric Basley</Typography>
-            </Grid>
-            <Grid item>
-              <IconButton>
-                <MoreVertIcon />
-              </IconButton>
-            </Grid>
-          </Grid>
-        </CardActions>
-      </Card>
-    </Grid>
+    <Grid container justify='center' spacing={16}>{
+      map(({ assets, country, firstname, lastname, mail, phoneNumber, reporter, status }) => (
+        <Grid container item className={classes.root}>
+          <Card className={classes.card}>
+            <CardHeader
+              action={
+                <IconButton>
+                  <MoreVertIcon />
+                </IconButton>
+              }
+              avatar={
+                <Avatar>
+                  <Typography>{initials(`${firstname} ${lastname}`)}</Typography>
+                </Avatar>
+              }
+              title={
+                <Grid container>
+                  <Typography>{`${firstname} ${lastname}`}</Typography>
+                  <Grid container alignItems='center' spacing={8}>
+                  <Grid item>
+                    <FlagIcon
+                      code={country}
+                    />
+                  </Grid>
+                  <Grid item>
+                    <Typography>{phoneNumber}</Typography>
+                  </Grid>
+                  </Grid>
+                  <Link className={classes.link} underline='always'>{mail}</Link>
+                </Grid>
+              }
+            />
+            <CardContent className={classes.content} spacing={8}>
+              <Grid container justify='center' spacing={8}>{
+                map(data => (
+                  <Grid item>
+                    <Chip color='primary' label={data} variant='outlined' />
+                  </Grid>
+                ))(assets)
+              }</Grid>
+            </CardContent>
+            <CardContent>
+              <Button
+                fullWidth
+                variant='contained'
+              >
+                <Typography>
+                  {status}
+                </Typography>
+              </Button>
+            </CardContent>
+            <CardActions>
+              <Grid container alignItems='center' justify='space-between'>
+                <Grid item>
+                  <Typography>{`${reporter.firstname} ${reporter.lastname}`}</Typography>
+                </Grid>
+                <Grid item>
+                  <IconButton>
+                    <MoreVertIcon />
+                  </IconButton>
+                </Grid>
+              </Grid>
+            </CardActions>
+          </Card>
+        </Grid>
+      ))(datas)
+    }</Grid>
   );
 }
 
